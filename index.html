@@ -59,7 +59,7 @@
 
 <script>
 const messages=document.getElementById('messages'), input=document.getElementById('input');
- add(text,who='ai'){const d=document.createElement('div');d.className='bubble '+who;d.textContent=text;messages.appendChild(d);d.scrollIntoView({behavior:'smooth'});}
+ function add(text,who='ai'){){const d=document.createElement('div');d.className='bubble '+who;d.textContent=text;messages.appendChild(d);d.scrollIntoView({behavior:'smooth'});}
 async function send(){
   const t=input.value.trim();
   if(!t)return;
