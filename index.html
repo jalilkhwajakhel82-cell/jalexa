@@ -59,12 +59,30 @@
 
 <script>
 const messages=document.getElementById('messages'), input=document.getElementById('input');
-function add(text,who='ai'){const d=document.createElement('div');d.className='bubble '+who;d.textContent=text;messages.appendChild(d);d.scrollIntoView({behavior:'smooth'});}
-function send(){
-  const t=input.value.trim(); if(!t)return;
-  add(t,'user'); input.value='';
-  setTimeout(()=>add("I'm Jalexa! This screen is working. Next we can connect me to a real AI so I can answer your questions and analyze pictures."),350);
+ add(text,who='ai'){const d=document.createElement('div');d.className='bubble '+who;d.textContent=text;messages.appendChild(d);d.scrollIntoView({behavior:'smooth'});}
+async function send(){
+  const t=input.value.trim();
+  if(!t)return;
+
+  add(t,'user');
+  input.value='';
+
+  add('Thinking...','ai');
+
+  try{
+    const response=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:t})
+    });
+
+    const data=await response.json();
+    messages.lastElementChild.textContent=data.reply || data.error || 'Sorry, I could not answer.';
+  }catch(error){
+    messages.lastElementChild.textContent='Sorry, something went wrong.';
+  } 
 }
+  
 document.getElementById('send').onclick=send;
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
 document.getElementById('clearBtn').onclick=()=>{messages.innerHTML='';add("Chat cleared. What would you like to ask?");};
