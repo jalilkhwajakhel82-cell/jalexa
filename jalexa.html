@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jalexa — AI Assistant</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#090b1a,#17103a 55%,#0b1935);color:#fff;min-height:100vh}
+  .app{max-width:900px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:24px}
+  header{display:flex;align-items:center;gap:14px;padding:10px 0 24px}
+  .logo{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#4d7cff,#9b5cff);display:grid;place-items:center;font-size:31px;font-weight:800;position:relative;box-shadow:0 0 30px #6d5cff55}
+  .logo:after{content:"✦";position:absolute;right:-6px;top:-10px;font-size:20px}
+  h1{margin:0;font-size:30px} .tag{color:#bfc5e9;margin-top:3px}
+  .welcome{margin:auto 0 18px;text-align:center}
+  .welcome h2{font-size:34px;margin:0 0 8px}.welcome p{color:#bfc5e9}
+  .messages{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+  .bubble{max-width:78%;padding:13px 16px;border-radius:18px;line-height:1.45}
+  .ai{background:#ffffff12;border:1px solid #ffffff15;align-self:flex-start}
+  .user{background:linear-gradient(135deg,#4d7cff,#7655ee);align-self:flex-end}
+  .composer{background:#ffffff0d;border:1px solid #ffffff18;border-radius:22px;padding:10px;display:flex;gap:8px;align-items:center}
+  textarea{flex:1;background:transparent;border:0;outline:0;color:white;resize:none;font-size:16px;padding:10px;min-height:46px}
+  button{border:0;border-radius:15px;padding:12px 15px;background:#ffffff12;color:white;cursor:pointer;font-size:15px}
+  button:hover{background:#ffffff20}.send{background:linear-gradient(135deg,#4d7cff,#8c5cff);font-weight:700}
+  .tools{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.tools button{font-size:13px}
+  input[type=file]{display:none}
+  .note{text-align:center;color:#777d9e;font-size:12px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">J</div>
+    <div><h1>Jalexa</h1><div class="tag">Ask anything. Create anything. ⭐</div></div>
+  </header>
+
+  <section class="welcome">
+    <h2>Hi, I'm Jalexa 👋</h2>
+    <p>Your AI assistant for questions, ideas, homework, images, and more.</p>
+  </section>
+
+  <div id="messages" class="messages">
+    <div class="bubble ai">What can I help you with today?</div>
+  </div>
+
+  <div class="composer">
+    <textarea id="input" placeholder="Ask Jalexa anything..." rows="1"></textarea>
+    <button id="mic" title="Voice input">🎤</button>
+    <button id="send" class="send">Send</button>
+  </div>
+  <div class="tools">
+    <button id="imageBtn">📷 Add picture</button>
+    <button id="drawBtn">🎨 Drawing idea</button>
+    <button id="clearBtn">🗑️ Clear chat</button>
+  </div>
+  <input id="imageInput" type="file" accept="image/*">
+  <div class="note">This is your first Jalexa prototype. AI answers will be connected in the next step.</div>
+</div>
+
+<script>
+const messages=document.getElementById('messages'), input=document.getElementById('input');
+function add(text,who='ai'){const d=document.createElement('div');d.className='bubble '+who;d.textContent=text;messages.appendChild(d);d.scrollIntoView({behavior:'smooth'});}
+function send(){
+  const t=input.value.trim(); if(!t)return;
+  add(t,'user'); input.value='';
+  setTimeout(()=>add("I'm Jalexa! This screen is working. Next we can connect me to a real AI so I can answer your questions and analyze pictures."),350);
+}
+document.getElementById('send').onclick=send;
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+document.getElementById('clearBtn').onclick=()=>{messages.innerHTML='';add("Chat cleared. What would you like to ask?");};
+document.getElementById('drawBtn').onclick=()=>add("🎨 Tell me what you want me to draw—for example: “Draw a triangle with angles 60°, 60°, and 60°.”");
+document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();
+document.getElementById('imageInput').onchange=e=>{if(e.target.files[0]){add("📷 Picture selected: "+e.target.files[0].name,'user');add("I can see that a picture was added. In the next step, we'll connect Jalexa's vision feature so I can actually analyze it.");}};
+document.getElementById('mic').onclick=()=>{
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){add("Voice input isn't supported by this browser. You can still type your question.");return;}
+  const r=new SpeechRecognition();r.lang='en-US';r.onresult=e=>{input.value=e.results[0][0].transcript;};r.start();
+};
+</script>
+</body>
+</html>
